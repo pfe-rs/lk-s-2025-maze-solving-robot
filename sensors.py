@@ -6,7 +6,7 @@ import maze
 
 def uncertanity_add(distance, angle, sigma):
     mean = np.array([distance, angle])
-    covariace = np.diag(sigma ** 2)
+    covariace = np.diag(sigma ** 2) # covariace matrix 
     distance, angle = np.random.multivariate_normal(mean, covariace)
     distance = max(distance, 0)
     angle = max(angle, 0)
@@ -30,15 +30,18 @@ class LaserSensor:
     def sense_obstacles(self):
         data = []
         x1, y1 = self.position[0], self.position[1]
-        for angle in np.linspace(0, 2 * math.pi, 60):
+        for angle in np.linspace(0, 2 * math.pi, 120):
             x2 = x1 + self.Range * math.cos(angle)
             y2 = y1 - self.Range * math.sin(angle)
-            for i in range(0, 100):
+            for i in range(0, 150): # 100 je bilo ## 
                 u = i / 100
                 x = int(x2 * u + x1 * (1 - u))
                 y = int(y2 * u + y1 * (1 - u))
+                #py.draw.line(self.map, (0,255,0), self.position, (x,y))  # Zeleno - senzor zrak
+
                 if 0 < x < self.sirina and 0 < y < self.visina:
                     color = self.map.get_at((x, y))
+                    #py.draw.line(self.map, (0,255,0), self.position, (x,y))
                     if (color[0], color[1], color[2]) == (0, 0, 0):
                         distance = self.EuclidianDistIzmedjuTacaka((x, y))
                         output = uncertanity_add(distance, angle, self.sigma)
