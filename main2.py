@@ -15,9 +15,9 @@ def random_color():
 
 FeatureMAP = featuresDetection()
 environment = buildMapu((600, 1200))
-laser = LaserSensor(200, environment.map.copy(), uncertanity=(0.5, 0.01))
+laser = LaserSensor(600, environment.map.copy(), uncertanity=(0.5, 0.01))
 
-environment.map.fill((0,0,0))  # bela pozadina
+environment.map.fill((0,0,0))  # crna pozadina
 
 environment.infomap = environment.map.copy()
 originalMap = environment.map.copy()
@@ -25,6 +25,7 @@ originalMap = environment.map.copy()
 running = True
 while running:
     environment.infomap = originalMap.copy()
+    FeatureMAP.draw_line_features(environment.infomap)
     ENDPOINTS = [0, 0]
     sensorON = py.mouse.get_focused()
     PREDICTED_POINTS_TODRAW = []
