@@ -4,6 +4,7 @@ import random
 from environment import buildMapu
 from sensors import LaserSensor
 from features import featuresDetection
+import time
 
 py.init()
 screen = py.display.set_mode((1200, 600))
@@ -15,7 +16,7 @@ def random_color():
 
 FeatureMAP = featuresDetection()
 environment = buildMapu((600, 1200))
-laser = LaserSensor(600, environment.map.copy(), uncertanity=(0.5, 0.01))
+laser = LaserSensor(800, environment.map.copy(), uncertanity=(0.5, 0.01))
 
 environment.map.fill((0,0,0))  # crna pozadina
 
@@ -24,6 +25,7 @@ originalMap = environment.map.copy()
 
 running = True
 while running:
+    time.sleep(0.1)
     environment.infomap = originalMap.copy()
     FeatureMAP.draw_line_features(environment.infomap)
     ENDPOINTS = [0, 0]
@@ -43,11 +45,11 @@ while running:
 
         BREAK_POINT_IND = 0  # resetuj svaki put kad miš aktivira senzor
 
-        while BREAK_POINT_IND < (FeatureMAP.NP - FeatureMAP.PMIN):
-            seedSeg = FeatureMAP.seed_segment_detection(laser.position, BREAK_POINT_IND)
+        while BREAK_POINT_IND < (FeatureMAP.NP - FeatureMAP.PMIN): # break point ind je indeks u listi laserpoints od kog pocinjem traziti novi seed segment, ne krecem ispocetka vec gledam nove podatke svaki put
+            seedSeg = FeatureMAP.seed_segment_detection(laser.position, BREAK_POINT_IND) 
             if not seedSeg:
                 break
-            seedSegment, PREDICTED_POINTS_TODRAW, INDICES = seedSeg
+            seedSegment, PREDICTED_POINTS_TODRAW, INDICES = seedSeg # indices je tuple koji kaze koje tacke su u pocetnom seed segmentu npr indices(12, 18) koristi tacke od 12 do 18
             results = FeatureMAP.seed_segment_growing(INDICES, BREAK_POINT_IND)
             if not results:
                 BREAK_POINT_IND = INDICES[1]
@@ -67,3 +69,4 @@ while running:
     environment.map.blit(environment.infomap, (0, 0))
     screen.blit(environment.map, (0, 0))
     py.display.update()
+ 

@@ -30,7 +30,7 @@ class LaserSensor:
     def sense_obstacles(self):
         data = []
         x1, y1 = self.position[0], self.position[1]
-        for angle in np.linspace(0, 2 * math.pi, 120):
+        for angle in np.linspace(0, 2 * math.pi, 200):
             x2 = x1 + self.Range * math.cos(angle)
             y2 = y1 - self.Range * math.sin(angle)
             for i in range(0, 150): # 100 je bilo ## 
