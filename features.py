@@ -9,16 +9,16 @@ class featuresDetection:
         self.EPSILON = 4 # max odstupanje od linije
         self.DELTA = 4 # granica koliko neka Lidar tacka dobro lezi ili ne lezi na liniji  
         self.SNUM = 5  # broj pocetnih tacaka u seed segmentu
-        self.PMIN = 15 # min broj tacaka da bi segment bio bolidan
-        self.LMIN = 12 # min duzina linijskog segmenta
+        self.PMIN = 12 # min broj tacaka da bi segment bio bolidan
+        self.LMIN = 10 # min duzina linijskog segmenta
         self.GMAX = 10 # max rastojanje medju susednim tackama
-        self.LMAX = 200 # max duzina linije 
-        self.GUSTOCA_PRAGA = 0.2
+        self.LMAX = 200
+        self.GUSTOCA_PRAGA = 0.05
 
         self.SEED_SEGMENTS = []
         self.LINE_SEGMENTS = []
         self.LASERPOINTS = []
-        self.LINE_PARAMS = None  # line_params je fitting linija zida dobijena iz odr fitovanja
+        self.LINE_PARAMS = None
         self.NP = len(self.LASERPOINTS) - 1 # broj tacaka
         self.LR = 0 # duzina trenutnog segmenta
         self.PR = 0 # broj tacaka u trenutnom segmentu
@@ -195,7 +195,7 @@ class featuresDetection:
 
             start_point = self.LASERPOINTS[PB + 1][0]
             end_point = self.LASERPOINTS[PF - 1][0]
- 
+
             self.LINE_FEATURES.append({
                 'start': start_point,
                 'end': end_point,

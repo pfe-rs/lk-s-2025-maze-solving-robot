@@ -43,6 +43,7 @@ while running:
         sensor_data = laser.sense_obstacles()
         FeatureMAP.laser_points_set(sensor_data)
 
+
         BREAK_POINT_IND = 0  # resetuj svaki put kad miš aktivira senzor
 
         while BREAK_POINT_IND < (FeatureMAP.NP - FeatureMAP.PMIN): # break point ind je indeks u listi laserpoints od kog pocinjem traziti novi seed segment, ne krecem ispocetka vec gledam nove podatke svaki put

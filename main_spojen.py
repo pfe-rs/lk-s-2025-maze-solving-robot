@@ -3,29 +3,30 @@ import math
 import random
 import heapq
 from environment import buildMapu  
-from sensors import LaserSensor  
-import maze
+from sensors import LaserSensor
+from features import featuresDetection
+import time    
 
 py.init()  
 
 environment = buildMapu((600, 1200))  
-environment.originalMap = environment.eksternaMapa.copy()  # Pravi kopiju spoljne (originalne) mape
-environment.infomap.fill((0, 0, 0))  # Puni infomap crnom bojom (prazna mapa informacije)
-laser = LaserSensor(200, environment.originalMap, uncertanity=(0.5, 0.01))  
-# Kreira laser senzor sa dometom 200 piksela, koristi originalnu mapu za detekciju prepreka,
-# i definiše neizvjesnost mjerenja
+environment.originalMap = environment.eksternaMapa.copy()
+environment.infomap.fill((0, 0, 0))
+laser = LaserSensor(200, environment.originalMap, uncertanity=(0.5, 0.01))
+FeatureMAP = featuresDetection()  
+
 # prvi broj u uncertanity zagradi definiše standardnu devijaciju, a drugi dodatni faktor nesigurnosti
 
 clock = py.time.Clock() 
 
-CELL_SIZE = 10  # Dimenzija ćelije mreže u pikselima
-grid_width = environment.originalMap.get_width() // CELL_SIZE  # Širina mreže u ćelijama
-grid_height = environment.originalMap.get_height() // CELL_SIZE  # Visina mreže u ćelijama
+CELL_SIZE = 10  # dimenzija celije mreze u pikselima
+grid_width = environment.originalMap.get_width() // CELL_SIZE  # sirina mreze u celijama
+grid_height = environment.originalMap.get_height() // CELL_SIZE  # visina mreze u celijama
 
 def is_cell_walkable(cx, cy):
     # Provjerava da li je ćelija u mreži "prohodna" tj. bez prepreka
-    margin = 2  # Provera sa marginom oko ćelije (radi sigurnosti)
-    # Definiše početne i krajnje koordinate u pikselima sa marginom, ne izlazi iz mape
+    margin = 2  # zadebljanje oko zida, da ne bi udarao u zid
+    
     start_x = max(cx * CELL_SIZE - margin, 0)
     end_x = min((cx + 1) * CELL_SIZE + margin, environment.originalMap.get_width()-1)
     start_y = max(cy * CELL_SIZE - margin, 0)
@@ -34,20 +35,19 @@ def is_cell_walkable(cx, cy):
     # Prolazi kroz sve piksele unutar te oblasti
     for x in range(start_x, end_x):
         for y in range(start_y, end_y):
-            # Ako bilo koji piksel ima boju crnu (0,0,0), znači prepreka - ćelija nije prohodna
-            if environment.originalMap.get_at((x, y))[:3] == (0, 0, 0):
+            if environment.originalMap.get_at((x, y))[:3] == (0, 0, 0): # gleda di je prepreka
                 return False
     return True  # Ako nije pronađena prepreka, ćelija je prohodna
 
 def heuristic(a, b):
-    # Heuristička funkcija za A* algoritam - koristi Manhattansku distancu
+    # Heuristicka funkcija za A* algoritam, koristi Manhattansku distancu
     return abs(a[0]-b[0]) + abs(a[1]-b[1])
 
 def astar(start, goal):
-    # Implementacija A* algoritma za pronalaženje najkraće putanje između start i goal ćelije
+    # implementacija a star za pronalazak najkraceg puta od start do krajnje celije
 
-    open_set = []  # Prioritetni red sa čvorovima koje treba istražiti
-    heapq.heappush(open_set, (0, start))  # Dodaje start ćeliju sa f_score = 0
+    open_set = []  # red sa cvorovima koje treba straziti
+    heapq.heappush(open_set, (0, start))  # dodaje start ćeliju sa f_score = 0
 
     came_from = {}  # Mapa koja pamti prethodni čvor za svaki posećeni čvor (za rekonstrukciju puta)
     g_score = {start: 0}  # Cijena prelaska od starta do date ćelije (g)
@@ -57,17 +57,17 @@ def astar(start, goal):
         current = heapq.heappop(open_set)[1]  # Uzima ćeliju sa najmanjim f_score
 
         if current == goal:  
-            # Ako je stigao do cilja, rekonstruiše putanju
+            # Ako je stigao do cilja, rekonstruise putanju
             path = []
             while current in came_from:
                 path.append(current)
                 current = came_from[current]
             path.append(start)
-            path.reverse()  # Putanja od starta do cilja
+            path.reverse()  # putanja od starta do cilja
             return path
 
         x, y = current
-        neighbors = []  # Lista susednih ćelija koje su prohodne
+        neighbors = []  # Lista susednih celija koje su prohodne
 
         # Provjerava susjedne ćelije u 8 pravaca (4 ortogonalne + 4 dijagonalne)
         for dx, dy in [(-1,0),(1,0),(0,-1),(0,1), (-1,-1), (-1,1), (1,-1), (1,1)]:
@@ -96,7 +96,7 @@ def draw_laser_beam(surface, start_pos, angle, max_distance, color):
         x = int(start_pos[0] + i * math.cos(angle))
         y = int(start_pos[1] - i * math.sin(angle))  
 
-        # Provjera da li je pixel u granicama površine
+        # Provjera da li je pixel u granicama mape
         if not (0 <= x < surface.get_width() and 0 <= y < surface.get_height()):
             break
 
@@ -127,13 +127,13 @@ def update_purple_edges(surface, center, radius=75):
     width, height = surface.get_width(), surface.get_height()
     cx, cy = center
 
-    # Definiše područje unutar kojeg radi update, ne izlazi iz površine
+    # def podrucje koje updatuje sa tim tackama
     xmin = max(1, cx - radius)
     xmax = min(width - 1, cx + radius)
     ymin = max(1, cy - radius)
     ymax = min(height - 1, cy + radius)
 
-    surface.lock()  # Zaključava površinu za efikasniji pristup pikselima
+    surface.lock()  
 
     to_remove = []  # Liste za pozicije koje treba ukloniti ili dodati
     to_add = []
@@ -162,7 +162,7 @@ def update_purple_edges(surface, center, radius=75):
                     to_remove.append((x, y))
 
             elif current_color == (255, 255, 0):  # Ako je žuta tačka
-                # Dodaje u ljubičaste sve susjedne crne tačke
+                # Dodaje u ljubičaste sve susjedne crne tačke, u smislu crne tacke koje predstavljaju neistrazena polja u infomapi
                 for dx in [-1, 0, 1]:
                     for dy in [-1, 0, 1]:
                         if dx == 0 and dy == 0:
@@ -247,18 +247,36 @@ class Robot:
             if not found_new_angle:
                 self.angle += random.choice([-1, 1]) * self.rot_step
 
+    
     def update(self):
-        # Ažurira podatke lasera i crta laserske zrake na infomap
         self.laser.position = self.get_pos()
-        data = self.laser.sense_obstacles()  # Prikuplja podatke sa lasera
+        data = self.laser.sense_obstacles()
         if data:
-            environment.dataStorage(data)  # Čuva podatke u environment objektu
+            FeatureMAP.laser_points_set(data)
 
-        # Crta laserske zrake na svakih 5 stepeni (ukupno 72 zraka)
-        for a in range(0, 360, 6):
-            angle_rad = math.radians(a)
-            draw_laser_beam(self.infomap, self.get_pos(), angle_rad, 200, (255, 255, 0))
-
+            BREAK_POINT_IND = 0
+            while BREAK_POINT_IND < (FeatureMAP.NP - FeatureMAP.PMIN):
+                seedSeg = FeatureMAP.seed_segment_detection(self.get_pos(), BREAK_POINT_IND)
+                if not seedSeg:
+                    break
+                seedSegment, predicted_points, INDICES = seedSeg
+                results = FeatureMAP.seed_segment_growing(INDICES, BREAK_POINT_IND)
+                if not results:
+                    BREAK_POINT_IND = INDICES[1]
+                    continue
+                line_seg, line_eq, OUTERMOST, BREAK_POINT_IND, _, (m, c) = results
+                ENDPOINTS = [
+                    FeatureMAP.projection_point2line(OUTERMOST[0], m, c),
+                    FeatureMAP.projection_point2line(OUTERMOST[1], m, c),
+                ]
+                COLOR = (255, 0, 0)
+                for point in line_seg:
+                    x, y = int(point[0][0]), int(point[0][1])
+                    if 0 <= x < environment.infomap.get_width() and 0 <= y < environment.infomap.get_height():
+                        py.draw.circle(self.infomap, COLOR, (x, y), 2)
+                py.draw.line(self.infomap, (255, 0, 0), ENDPOINTS[0], ENDPOINTS[1], 2)
+            FeatureMAP.reset_points()
+            
     def get_visible_purple_front(self, radius=200, fov_deg=360):
         # Vraća sve ljubičaste tačke unutar radijusa i polja vida
         visible = []
@@ -363,7 +381,7 @@ class Robot:
             target_y = next_cell[1] * CELL_SIZE + CELL_SIZE // 2  # Centar ciljne ćelije Y
 
             if not is_cell_walkable(next_cell[0], next_cell[1]):
-                # Ako ćelija nije hodljiva, briše putanju i ide napred
+                # Ako ćelija nije hodljiva, robot briše putanju i ide napred
                 self.path = []
                 self.move_forward()
                 return
@@ -382,50 +400,48 @@ class Robot:
                 dy = max(pos[1] for pos in self.last_positions) - min(pos[1] for pos in self.last_positions)
                 if dx < 3 and dy < 3:  # Ako se skoro uopšte nije pomjerio
                     self.path = []  # Resetuje putanju
-                    self.angle += random.choice([-1, 1]) * self.rot_step  # Rotira se nasumično
+                    self.angle += random.choice([-1, 1]) * self.rot_step  # robot se rotira nasumično
 
-            # Ako se sudari u pokretu, resetuje putanju
+            # ako se sudari u pokretu, resetuje putanju
             new_x = self.x + self.vel * math.cos(self.angle)
             new_y = self.y - self.vel * math.sin(self.angle)
             if self.detect_collision((new_x, new_y)):
                 self.path = []
 
-robot = None  # Početno nema robota na mapi
+robot = None  
 running = True
 frame_count = 0
 
 while running:
     frame_count += 1
 
-    # Obrada događaja Pygame-a (npr. izlazak i klik mišem)
     for event in py.event.get():
         if event.type == py.QUIT:
-            running = False  # Zatvara program
+            running = False
 
         elif event.type == py.MOUSEBUTTONDOWN:
             pos = py.mouse.get_pos()
             color = environment.originalMap.get_at(pos)[:3]
 
-            if color == (255, 255, 255):  # Ako je bijela pozadina, može da postavi robota
+            if color == (255, 255, 255):  
                 laser.position = pos
                 robot = Robot(pos[0], pos[1], laser, environment.originalMap, environment.infomap)
                 print("Robot postavljen na:", pos)
 
     if robot:
-        robot.update()  # Ažurira laserske podatke i crta zrake
-        robot.update_movement()  # Ažurira kretanje robota
-        environment.show_sensorData()  # Prikazuje podatke senzora 
+        robot.update()
+        robot.update_movement()
+        environment.show_sensorData()
 
         if frame_count % 5 == 0:
-            # Svakih 5 frejmova ažurira ljubičaste ivice oko robota u radijusu 75 piksela
+            # svakih 5 frejmova ažurira ljubičaste ivice oko robota u radijusu 75 piksela
             update_purple_edges(environment.infomap, robot.get_pos(), radius=75)
 
-    environment.map.blit(environment.infomap, (0, 0))  # Crta infomap na glavnu mapu
+    environment.map.blit(environment.infomap, (0, 0))
 
     if robot:
-        # Crta robota kao krug roze boje na njegovoj poziciji
         py.draw.circle(environment.map, (255, 205, 190), robot.get_pos(), 5)
 
-    py.display.update()  # Ažurira ekran
+    py.display.update()
 
-    clock.tick(30)  # Ograničava na 60 FPS
+    clock.tick(100)
