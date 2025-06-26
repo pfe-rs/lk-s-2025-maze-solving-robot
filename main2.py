@@ -5,7 +5,7 @@ from environment import buildMapu
 from sensors import LaserSensor
 from features import featuresDetection
 import time
-
+   
 py.init()
 screen = py.display.set_mode((1200, 600))
 py.display.set_caption("SLAM Simulation")

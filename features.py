@@ -3,7 +3,7 @@ import math
 from fractions import Fraction
 from scipy.odr import *
 import pygame as py
-
+   
 class featuresDetection:
     def __init__(self):
         self.EPSILON = 4 # max odstupanje od linije

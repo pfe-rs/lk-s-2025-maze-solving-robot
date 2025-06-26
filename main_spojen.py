@@ -7,7 +7,7 @@ from sensors import LaserSensor
 from features import featuresDetection
 import time    
 
-py.init()  
+py.init()    
 
 environment = buildMapu((600, 1200))  
 environment.originalMap = environment.eksternaMapa.copy()
