@@ -397,9 +397,10 @@ frame_count = 0
 while running:
     frame_count += 1
 
+    # Obrada događaja Pygame-a (npr. izlazak i klik mišem)
     for event in py.event.get():
         if event.type == py.QUIT:
-            running = False
+            running = False  # Zatvara program
 
         elif event.type == py.MOUSEBUTTONDOWN:
             pos = py.mouse.get_pos()

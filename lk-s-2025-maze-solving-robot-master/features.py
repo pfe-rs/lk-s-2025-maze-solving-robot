@@ -6,14 +6,14 @@ import pygame as py
    
 class featuresDetection:
     def __init__(self):
-        self.EPSILON = 3.5 # max odstupanje od linije
-        self.DELTA = 3.5 # granica koliko neka Lidar tacka dobro lezi ili ne lezi na liniji  
+        self.EPSILON = 4 # max odstupanje od linije
+        self.DELTA = 4 # granica koliko neka Lidar tacka dobro lezi ili ne lezi na liniji  
         self.SNUM = 5  # broj pocetnih tacaka u seed segmentu
-        self.PMIN = 14 # min broj tacaka da bi segment bio bolidan
+        self.PMIN = 12 # min broj tacaka da bi segment bio bolidan
         self.LMIN = 10 # min duzina linijskog segmenta
         self.GMAX = 10 # max rastojanje medju susednim tackama
         self.LMAX = 200
-        self.GUSTOCA_PRAGA = 0.20
+        self.GUSTOCA_PRAGA = 0.05
 
         self.SEED_SEGMENTS = []
         self.LINE_SEGMENTS = []
@@ -123,46 +123,44 @@ class featuresDetection:
         return predx, predy # gde se sece lidar znak i fitting linija. zelimo da vidimo da li se stavrna ldiar tacka poklapa sa tackom preseka, tj da li ldiar vidi zid bas tamo gde fitting linija to ocekuje. ako su predaleko ta tacka onda ne pripada liniji i koristimo delta da to odlucimo
 
     def seed_segment_detection(self, robot_position, break_point_ind):
-        self.NP = max(0, self.NP)  # osigurava da broj tacaka nije negativan
-        self.SEED_SEGMENTS = []  # prazni prethodne segmente
+        self.NP = max(0, self.NP)
+        self.SEED_SEGMENTS = []
+        for i in range(break_point_ind, (self.NP - self.PMIN)):
+            flag = True
+            predicted_points_to_draw = []
+            j = i + self.SNUM
+            m, c = self.odr_fit(self.LASERPOINTS[i:j])
+            params = self.lineFormSi2Gen(m, c)
 
-        for i in range(break_point_ind, (self.NP - self.PMIN)):  # prolazi kroz sve moguce pocetke segmenata
-            flag = True  # pretpostavljamo da je segment validan
-            predicted_points_to_draw = []  # za debug crtanje
-            j = i + self.SNUM  # uzimamo SNUM tacaka kao seed segment
-            m, c = self.odr_fit(self.LASERPOINTS[i:j])  # radimo linijsku regresiju
-            params = self.lineFormSi2Gen(m, c)  # dobijamo liniju u generalnom obliku
-
-            for k in range(i, j):  # proveravamo da li sve tacke dobro leze na toj liniji
+            for k in range(i, j):
                 predicted_point = self.predictPoint(params, self.LASERPOINTS[k][0], robot_position)
                 predicted_points_to_draw.append(predicted_point)
 
                 d1 = self.distancaPointaodLinije(params, predicted_point)
-                if d1 > self.DELTA:  # ako je daleko previshe od linije, nije validan
+                if d1 > self.DELTA:
                     flag = False
                     break
 
                 d2 = self.distancaPointaodLinije(params, predicted_point)
-                if d2 > self.EPSILON:  # takodje ako je odstupanje veca od epsilon
+                if d2 > self.EPSILON:
                     flag = False
                     break
 
-            if flag:  # ako je sve proslo, vracamo segment
+            if flag:
                 self.LINE_PARAMS = params
                 return [self.LASERPOINTS[i:j], predicted_points_to_draw, (i, j)]
 
-        return False  # nismo nasli validan segment
+        return False
 
     def seed_segment_growing(self, indices, break_point):
-        line_eq = self.LINE_PARAMS  # uzimamo prethodno izracunate parametre linije
-        i, j = indices  # pocetni i krajnji indeks seed segmenta
-        PB, PF = max(break_point, i - 1), min(j + 1, len(self.LASERPOINTS) - 1)  # pocetak i kraj za prosirivanje
+        line_eq = self.LINE_PARAMS
+        i, j = indices
+        PB, PF = max(break_point, i - 1), min(j + 1, len(self.LASERPOINTS) - 1)
 
-        # sirimo segment napred dok god tacke leze dobro i nisu udaljene previse
         while self.distancaPointaodLinije(line_eq, self.LASERPOINTS[PF][0]) < self.EPSILON:
             if PF > self.NP - 1:
                 break
-            m, b = self.odr_fit(self.LASERPOINTS[PB:PF])  # ponovno fitovanje linije
+            m, b = self.odr_fit(self.LASERPOINTS[PB:PF])
             line_eq = self.lineFormSi2Gen(m, b)
             POINT = self.LASERPOINTS[PF][0]
             PF += 1
@@ -170,9 +168,8 @@ class featuresDetection:
             if self.euklidijanovaDistancaizmedjuPoints(POINT, NEXTPOINT) > self.GMAX:
                 break
 
-        PF -= 1  # vracamo poslednju tacku koja je prekoracila
+        PF -= 1
 
-        # sirimo segment unazad na isti nacin
         while self.distancaPointaodLinije(line_eq, self.LASERPOINTS[PB][0]) < self.EPSILON:
             if PB < break_point:
                 break
@@ -186,11 +183,11 @@ class featuresDetection:
 
         PB += 1
 
-        LR = self.dist_point2point(self.LASERPOINTS[PB][0], self.LASERPOINTS[PF][0])  # duzina linije
-        PR = len(self.LASERPOINTS[PB:PF])  # broj tacaka u segmentu
-        gustoca = PR / (LR + 1e-5)  # gustina tacaka
+        LR = self.dist_point2point(self.LASERPOINTS[PB][0], self.LASERPOINTS[PF][0])
+        PR = len(self.LASERPOINTS[PB:PF])
+        gustoća = PR / (LR + 1e-5)
 
-        if (LR >= self.LMIN) and (PR >= self.PMIN) and (LR <= self.LMAX) and (gustoca >= self.GUSTOCA_PRAGA):
+        if (LR >= self.LMIN) and (PR >= self.PMIN) and (LR <= self.LMAX) and (gustoća >= self.GUSTOCA_PRAGA):
             self.LINE_PARAMS = line_eq
             m, b = self.lineFormGen2SlopeIntercept(line_eq[0], line_eq[1], line_eq[2])
             self.two_points = self.line2points(m, b)
@@ -199,87 +196,25 @@ class featuresDetection:
             start_point = self.LASERPOINTS[PB + 1][0]
             end_point = self.LASERPOINTS[PF - 1][0]
 
-            # proveravamo da li je ova linija vec detektovana
-            for linija in self.LINE_FEATURES:
-                if ((self.euklidijanovaDistancaizmedjuPoints(start_point, linija['start']) < 10 and
-                    self.euklidijanovaDistancaizmedjuPoints(end_point, linija['end']) < 10) or
-                    (self.euklidijanovaDistancaizmedjuPoints(start_point, linija['end']) < 10 and
-                    self.euklidijanovaDistancaizmedjuPoints(end_point, linija['start']) < 10)):
-                    return False
-
-            if len(self.LINE_FEATURES) > 100:
-                self.LINE_FEATURES.pop(0)  # ogranicenje da lista ne raste beskonacno
-
-            # dodajemo novi feature segment
             self.LINE_FEATURES.append({
                 'start': start_point,
                 'end': end_point,
-                'params_gen': line_eq,
-                'params_si': (m, b),
-                'points': self.LASERPOINTS[PB:PF]
+                'params_gen': line_eq, # parametri linije u general form kao ax+by+c=0
+                'params_si': (m, b), # parametri linije u slope intercept form gde je m nagib linije, a b mesto je gde linija presrece tj interceptuje y (predikcija y za dato x) 
+                'points': self.LASERPOINTS[PB:PF] # sve tacke koje pripadaju segmentu linije od pb do pf
             })
 
             return [self.LASERPOINTS[PB:PF], self.two_points, (start_point, end_point), PF, line_eq, (m, b)]
         else:
             return False
 
-    def spoji_grupe_linija(self, angle_threshold=2.0, distance_threshold=4):
-        if len(self.LINE_FEATURES) < 10:
-            return
+    def draw_line_features(self, surface):
+        # Crtanje svih sirovih LIDAR tačaka (cyan)
+        for point in self.LASERPOINTS:
+            py.draw.circle(surface, (0, 255, 255), point[0], 1)
 
-        spojene = []  # nova lista za spojene grupe
-        grupa = [self.LINE_FEATURES[0]]  # prva linija je pocetak prve grupe
-
-        for i in range(1, len(self.LINE_FEATURES)):
-            trenutna = self.LINE_FEATURES[i]
-            prethodna = grupa[-1]
-
-            m1, _ = trenutna['params_si']
-            m2, _ = prethodna['params_si']
-            ugao1 = math.degrees(math.atan(m1))
-            ugao2 = math.degrees(math.atan(m2))
-
-            d1 = self.euklidijanovaDistancaizmedjuPoints(trenutna['start'], prethodna['end'])
-            d2 = self.euklidijanovaDistancaizmedjuPoints(trenutna['end'], prethodna['start'])
-            
-            if d1 > self.GMAX or d2 > self.GMAX:
-               continue  # preskaci spajanje
-
-
-            # ako su linije slicne po uglu i blizu su jedna drugoj, grupisu se
-            if abs(ugao1 - ugao2) < angle_threshold and (d1 < distance_threshold and d2 < distance_threshold):
-                grupa.append(trenutna)
-            else:
-                nova_linija = self.spoji_grupu_linija_u_jednu(grupa)
-                spojene.append(nova_linija)
-                grupa = [trenutna]
-
-        # dodavanje poslednje grupe
-        if grupa:
-            nova_linija = self.spoji_grupu_linija_u_jednu(grupa)
-            print(f"Spajam linije: {prethodna['start']}–{prethodna['end']} i {trenutna['start']}–{trenutna['end']}, ugao: {abs(ugao1 - ugao2)}, dist: {d1}, {d2}")
-            spojene.append(nova_linija)
-
-        self.LINE_FEATURES = spojene  # zamenjuje stare linije novim spojenim
-
-    def spoji_grupu_linija_u_jednu(self, grupa):
-        sve_tacke = []
-        for segment in grupa:
-            sve_tacke.extend(segment['points'])  # sve tacke koje pripadaju grupi se sakupljaju
-
-        if len(sve_tacke) > 50:
-            sve_tacke = sve_tacke[-50:]  # ogranicava broj tacaka da se ne pretrpa
-
-        m, b = self.odr_fit(sve_tacke)  # fitovanje nove linije
-        nova_linija = {
-            'start': grupa[0]['start'],
-            'end': grupa[-1]['end'],
-            'params_gen': self.lineFormSi2Gen(m, b),
-            'params_si': (m, b),
-            'points': sve_tacke
-        }
-        return nova_linija
-
-    def nacrtaj_segmentirano_spojene_linije(self, povrsina, boja=(0, 255, 0), debljina=2):
-        for linija in self.LINE_FEATURES:
-            py.draw.line(povrsina, boja, linija['start'], linija['end'], debljina)  # crta linije na pygame povrsini
+        # Crtanje detektovanih linija (crveno)
+        for feature in self.LINE_FEATURES:
+            start = feature['start']
+            end = feature['end']
+            py.draw.line(surface, (255, 0, 0), start, end, 2)

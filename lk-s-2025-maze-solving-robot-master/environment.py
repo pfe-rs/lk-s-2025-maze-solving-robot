@@ -13,18 +13,11 @@ class buildMapu:
         self.map = py.display.set_mode((self.mapsirina, self.mapvisina))
         self.map.blit(self.eksternaMapa, (0, 0))
         self.infomap = self.map.copy()
-        self.originalMap = self.eksternaMapa.copy()  # Dodato!
 
         self.crna = (0, 0, 0)
         self.bela = (255, 255, 255)
         self.roze = (255, 192, 203)
         self.crvena = (255, 0, 0)
-
-    def is_walkable(self, pos): #### dodala sam funkciju koja proverava prohodnost celije jer why not
-        x, y = pos
-        if 0 <= x < self.originalMap.get_width() and 0 <= y < self.originalMap.get_height():
-            return self.originalMap.get_at((x, y))[:3] == (255, 255, 255)
-        return False
 
     def RawAngleDisData2Coordinates(self, distance, angle, robotPosition):
         x = distance * math.cos(angle) + robotPosition[0]
@@ -43,3 +36,4 @@ class buildMapu:
             width, height = self.infomap.get_size()
             if 0 <= x < width and 0 <= y < height:
                 self.infomap.set_at((x, y), (255, 192, 203))
+
