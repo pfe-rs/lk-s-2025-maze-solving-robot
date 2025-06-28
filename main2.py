@@ -11,6 +11,7 @@ py.init()
 screen = py.display.set_mode((1200, 600))
 py.display.set_caption("SLAM Simulation")
 clock = py.time.Clock()  # kontrolaaa frejmova u sekundi, otp 1 frame po Bozicu i Uskrsu
+FeatureMAP = featuresDetection()
 
 def random_color():
     levels = range(32, 256, 32)
@@ -43,9 +44,13 @@ def procesiraj_lidar_podatke(laser, FeatureMAP, environment, sensor_data):
 
        # py.draw.line(environment.infomap, (255, 0, 0), ENDPOINTS[0], ENDPOINTS[1], 2)
         environment.dataStorage(sensor_data)
+    FeatureMAP.azuriraj_mapu_zidova()  # azuriranje big zidova
+    print(f"PRVO:{len(FeatureMAP.ZIDOVI_MAPE)}, DRUGO: {len(FeatureMAP.LINE_FEATURES)}")
+    # print(len(FeatureMAP.LASERPOINTS))
+    FeatureMAP.LASERPOINTS = []
+   # print(len(FeatureMAP.LASERPOINTS))
 
 
-FeatureMAP = featuresDetection()
 environment = buildMapu((600, 1200))
 laser = LaserSensor(800, environment.map.copy(), uncertanity=(0.0, 0.0))
 
@@ -81,4 +86,3 @@ while running:
     screen.blit(environment.map, (0, 0))
     py.display.update()
     clock.tick(15)
-

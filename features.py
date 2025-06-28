@@ -1,3 +1,4 @@
+        
 import numpy as np
 import math
 from fractions import Fraction
@@ -6,13 +7,13 @@ import pygame as py
    
 class featuresDetection:
     def __init__(self):
-        self.EPSILON = 3.5 # max odstupanje od linije
-        self.DELTA = 3.5 # granica koliko neka Lidar tacka dobro lezi ili ne lezi na liniji  
-        self.SNUM = 5  # broj pocetnih tacaka u seed segmentu
-        self.PMIN = 14 # min broj tacaka da bi segment bio bolidan
+        self.EPSILON = 3 # max odstupanje od linije
+        self.DELTA = 3 # granica koliko neka Lidar tacka dobro lezi ili ne lezi na liniji  
+        self.SNUM = 10  # broj pocetnih tacaka u seed segmentu
+        self.PMIN = 15 # min broj tacaka da bi segment bio bolidan
         self.LMIN = 10 # min duzina linijskog segmenta
         self.GMAX = 10 # max rastojanje medju susednim tackama
-        self.LMAX = 200
+        self.LMAX = 250 ########## 200
         self.GUSTOCA_PRAGA = 0.20
 
         self.SEED_SEGMENTS = []
@@ -23,6 +24,10 @@ class featuresDetection:
         self.LR = 0 # duzina trenutnog segmenta
         self.PR = 0 # broj tacaka u trenutnom segmentu
         self.LINE_FEATURES = []
+
+        self.ZIDOVI_MAPE = []  # pamte se one konacne linije
+        self.MAPA_UPDATED = False  # flag da ne spaja vise puta iste linije
+
 
     def euklidijanovaDistancaizmedjuPoints(self, point1, point2): # samo distanca dve tacke koje se nalaze na razlicitim koordinatama u coord sistemu
         return math.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
@@ -261,6 +266,50 @@ class featuresDetection:
             spojene.append(nova_linija)
 
         self.LINE_FEATURES = spojene  # zamenjuje stare linije novim spojenim
+
+    def azuriraj_mapu_zidova(self, angle_threshold=5.0, distance_threshold=10):
+        """Spoji sve trenutno poznate linije i ažuriraj konačnu mapu (ZIDOVI_MAPE)"""
+        if len(self.LINE_FEATURES) < 2:
+            return
+
+        # Spoji lokalne male linije u veće (lokalno grupisanje)
+        self.spoji_grupe_linija(angle_threshold, distance_threshold)
+
+        nove_zid_linije = []
+        for nova in self.LINE_FEATURES:
+            # Odbaci male i bezvredne segmente
+            
+            duzina = self.euklidijanovaDistancaizmedjuPoints(nova['start'], nova['end'])
+            broj_tacaka = len(nova['points'])
+
+            if duzina < 30 or broj_tacaka < 20:
+                continue
+
+            dodaj = True
+
+            for postojeca in self.ZIDOVI_MAPE:
+                ugao1 = math.degrees(math.atan(nova['params_si'][0]))
+                ugao2 = math.degrees(math.atan(postojeca['params_si'][0]))
+                d_start = self.euklidijanovaDistancaizmedjuPoints(nova['start'], postojeca['start'])
+                d_end = self.euklidijanovaDistancaizmedjuPoints(nova['end'], postojeca['end'])
+
+                paralelne = abs(ugao1 - ugao2) < angle_threshold
+                blizu = (d_start < distance_threshold and d_end < distance_threshold) or \
+                        (d_start < distance_threshold and d_start < duzina / 2) or \
+                        (d_end < distance_threshold and d_end < duzina / 2)
+
+                if paralelne and blizu:
+                    dodaj = False
+                    break
+
+            if dodaj:
+                nove_zid_linije.append(nova)
+
+        
+        self.ZIDOVI_MAPE.extend(nove_zid_linije) # dodaj samo one lineije koje stvarno zasluzuju
+
+        if nove_zid_linije: # ocisti samo ako imas nove koje si dodao
+            self.LINE_FEATURES = []
 
     def spoji_grupu_linija_u_jednu(self, grupa):
         sve_tacke = []
