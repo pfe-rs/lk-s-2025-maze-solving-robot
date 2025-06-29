@@ -14,7 +14,7 @@ environment.originalMap = environment.eksternaMapa.copy()
 environment.map.fill((0, 0, 0))
 
 laser = LaserSensor(300, environment.originalMap, uncertanity=(0.5, 0.01))
-
+ 
 random_points = []
 while len(random_points) < 5:
     x = random.randint(0, environment.originalMap.get_width() - 1)

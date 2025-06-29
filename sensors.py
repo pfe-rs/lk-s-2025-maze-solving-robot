@@ -11,7 +11,7 @@ def uncertanity_add(distance, angle, sigma):
     distance = max(distance, 0)
     angle = max(angle, 0)
     return [distance, angle]
-
+ 
 class LaserSensor:
     def __init__(self, range, map, uncertanity):
         self.Range = range

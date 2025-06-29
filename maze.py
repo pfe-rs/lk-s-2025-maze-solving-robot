@@ -9,7 +9,7 @@ MIN_ROOM_SIZE, MAX_ROOM_SIZE = 50, 400
 ROOM_COLOR = (255, 255, 255)
 CORRIDOR_COLOR = (255, 255, 255)  
 BG_COLOR = (0, 0, 0)
-
+ 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()

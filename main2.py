@@ -35,7 +35,7 @@ def procesiraj_lidar_podatke(laser, FeatureMAP, environment, sensor_data):
         line_seg, line_eq, OUTERMOST, BREAK_POINT_IND, _, (m, c) = results
         ENDPOINTS[0] = FeatureMAP.projection_point2line(OUTERMOST[0], m, c)
         ENDPOINTS[1] = FeatureMAP.projection_point2line(OUTERMOST[1], m, c)
-
+ 
        # COLOR = random_color()
         #for point in line_seg:
          #   x, y = int(point[0][0]), int(point[0][1])

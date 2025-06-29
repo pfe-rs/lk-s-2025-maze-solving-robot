@@ -36,7 +36,7 @@ class featuresDetection:
         A, B, C = params
         return abs(A * point[0] + B * point[1] + C) / math.sqrt(A ** 2 + B ** 2)
 
-    def dist_point2point(self, point1, point2): # isto sto i funkcija euklidijanovaDist... samo drugacije ime
+    def dist_point2point(self, point1, point2): # isto radi sto i funkcija euklidijanovaDist... samo konkreno za dve tacke medjusobno
         return self.euklidijanovaDistancaizmedjuPoints(point1, point2)
 
     def line2points(self, m, b):
@@ -188,7 +188,7 @@ class featuresDetection:
             NEXTPOINT = self.LASERPOINTS[PB][0]
             if self.dist_point2point(POINT, NEXTPOINT) > self.GMAX:
                 break
-
+ 
         PB += 1
 
         LR = self.dist_point2point(self.LASERPOINTS[PB][0], self.LASERPOINTS[PF][0])  # duzina linije

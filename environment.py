@@ -13,7 +13,7 @@ class buildMapu:
         self.map = py.display.set_mode((self.mapsirina, self.mapvisina))
         self.map.blit(self.eksternaMapa, (0, 0))
         self.infomap = self.map.copy()
-        self.originalMap = self.eksternaMapa.copy()  # Dodato!
+        self.originalMap = self.eksternaMapa.copy() 
 
         self.crna = (0, 0, 0)
         self.bela = (255, 255, 255)
@@ -42,4 +42,4 @@ class buildMapu:
             x, y = int(point[0]), int(point[1])
             width, height = self.infomap.get_size()
             if 0 <= x < width and 0 <= y < height:
-                self.infomap.set_at((x, y), (255, 192, 203))
+                self.infomap.set_at((x, y), (255, 192, 203)) 
