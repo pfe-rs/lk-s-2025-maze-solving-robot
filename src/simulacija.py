@@ -27,8 +27,6 @@ def simulacija(robot: dict, cilj: np.ndarray, mapa: dict):
     return putanja, istorija_int_mapa
 
 if __name__ == "__main__":
-    
-    robot = core.robot(np.array([15, 15]))
 
     mapa = {
         "celije": np.ones((60, 120)),
@@ -39,7 +37,10 @@ if __name__ == "__main__":
     mapa["celije"][10:40, 50:80] = 0
     mapa["celije"][20:30, 40:50] = 0
 
-    cilj = np.array([15, 70])
+    map_data = core.ucitaj_mapu("mapa.pkl")
+    mapa = map_data["mapa"]
+    robot = core.robot(map_data["start"])
+    cilj = map_data["end"]
 
     putanja, istorija_int_mapa = simulacija(robot, cilj, mapa)
 

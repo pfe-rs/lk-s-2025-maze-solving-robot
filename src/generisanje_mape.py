@@ -5,18 +5,10 @@ import pygame
 #import maze 
 import pickle
 import random
-from generisanje_mape import mapa
+import core
 
-
-def ucitaj_mapu(fajl):
-    with open(fajl, "rb") as f:
-        mapa = pickle.load(f)
-    return {"celije": mapa["mapa"]}
-
-def sacuvaj_mapu(fajl, mapa):
-    with open("mapa.pkl", "wb") as f: 
-        pickle.dump(mapa, f) # pretvara mapu u niz bajtova i zapisuje u fajl f 
-        # cuvanje mape u pickle file 
+SCREEN_HEIGHT = 60
+SCREEN_WIDTH = 120
 
 def generate_map():
     # 1 je slobodno polje
@@ -37,8 +29,7 @@ def generate_map():
 
     return mapa
 
-def generisi_mapu():
-    map_data = []
+def generisi_mape():
     
     for i in range(5): 
         matrix = generate_map() # generisem mapu sa sobama
@@ -48,20 +39,15 @@ def generisi_mapu():
         end_point = np.array([np.random.randint(0, SCREEN_HEIGHT), np.random.randint(0, SCREEN_WIDTH)])
 
         # cuvam mapu sa pocetnim i krajnjim tackama za robota
-        map_data.append({
-            'mapa': matrix,
-            'start': start_point.tolist(),
-            'end': end_point.tolist()
-        })
+        map_data = {
+            'mapa': core.grid_mapa(matrix),
+            'start': start_point,
+            'end': end_point
+        }
 
         # cuvanje u fjl
         with open(f"mapa_{i+1}.pkl", "wb") as f:
-            pickle.dump(map_data[-1], f)
+            pickle.dump(map_data, f)
         print(f"Mapa {i+1} je sačuvana u fajl mapa_{i+1}.pkl.")
 
-    return map_data
-
-
-mape = generisi_mapu()
-#print(f"screen width:{SCREEN_WIDTH}, height{SCREEN_HEIGHT}, w {W}, h {h}")
-mapa1 = ucitaj_mapu("mapa_1.pkl")
+generisi_mape()

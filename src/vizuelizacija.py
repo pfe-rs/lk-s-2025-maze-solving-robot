@@ -1,6 +1,7 @@
 import pygame
 import numpy as np
 import pickle
+import core
 
 
 def vizuelizacija(mapa: dict, cilj: np.ndarray, putanja: list, istorija_int_mapa: list):
@@ -71,6 +72,10 @@ if __name__ == "__main__":
     mapa["celije"][20:30, 40:50] = 0
 
     cilj = np.array([15, 70])
+
+    map_data = core.ucitaj_mapu("mapa.pkl")
+    mapa = map_data["mapa"]
+    cilj = map_data["end"]
 
     with open("simulacija_rezultati.pkl", "rb") as f:
         rez = pickle.load(f)

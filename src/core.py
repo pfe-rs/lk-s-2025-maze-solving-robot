@@ -11,11 +11,16 @@ SCREEN_WIDTH, SCREEN_HEIGHT = 120, 60
 senzor_radius = 10
 cilj = np.array([15, 70])
 tmp_linspace = np.linspace(0, 2 * np.pi, 100)
-
+    
 def ucitaj_mapu(fajl):
     with open(fajl, "rb") as f:
         mapa = pickle.load(f)
-    return {"celije": mapa["mapa"]}
+    return mapa
+
+def sacuvaj_mapu(fajl, mapa):
+    with open("mapa.pkl", "wb") as f: 
+        pickle.dump(mapa, f) # pretvara mapu u niz bajtova i zapisuje u fajl f 
+        # cuvanje mape u pickle file 
 
 def robot(pozicija):
     return {
