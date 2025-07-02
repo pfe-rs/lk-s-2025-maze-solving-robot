@@ -1,12 +1,17 @@
 import numpy as np
 
+# TODO: Prebacite sve ovo u detekcija.py
+
+# TODO: Umesto da radius bude deo laser.py (ili detekcija.py), treba da postane argument funkcije pucanje_lasera
 RADIUS = 10
+
+# TODO: korak definisite u funkciji koracanje_lasera
 KORAK = 0.1
 
 def generisanjeUglova(n):
     return np.linspace(0, 2 * np.pi, n)
 
-
+# TODO: Umesto x, y, mapa, n, ulazi treba da budu robot, prava_mapa, senzor
 def pucanjeLasera(x, y, mapa, n):
     udaljenostIUgao = []
 
@@ -30,6 +35,7 @@ def pucanjeLasera(x, y, mapa, n):
     return np.array(udaljenostIUgao)
 
 
+# TODO: Umesto x, y, mapa, n, ulazi treba da budu robot, prava_mapa, senzor
 def formiranjeSkena(x, y, mapa, n):
 
     sken = np.zeros(mapa.shape)
