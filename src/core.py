@@ -10,7 +10,7 @@ SCREEN_WIDTH, SCREEN_HEIGHT = 120, 60
 
 senzor_radius = 10
 cilj = np.array([15, 70])
-tmp_linspace = np.linspace(0, 2 * np.pi, 100)
+
 
 def dvosobni_stan():
     
@@ -32,10 +32,6 @@ def dvosobni_stan():
         'end': end_point
     }
 
-def ucitaj_mapu(fajl):
-    with open(fajl, "rb") as f:
-        mapa = pickle.load(f)
-    return mapa
 
 def sacuvaj_mapu(fajl, mapa):
     with open("mapa.pkl", "wb") as f: 
@@ -61,6 +57,11 @@ def laser_mapa(linije):
         "linije": linije,
     }
 
+def senzor():
+    return {
+        "radius": 10, # koliko daleko moze laser da vidi.
+        "num_lasers": 90 # broj lasera
+    }
 
 
 putanja = []
