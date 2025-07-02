@@ -6,7 +6,6 @@ KORAK = 0.1
 def generisanjeUglova(n):
     return np.linspace(0, 2 * np.pi, n)
 
-
 def pucanjeLasera(x, y, mapa, n):
     udaljenostIUgao = []
 
@@ -29,16 +28,12 @@ def pucanjeLasera(x, y, mapa, n):
 
     return np.array(udaljenostIUgao)
 
-
 def formiranjeSkena(x, y, mapa, n):
-
     sken = np.zeros(mapa.shape)
 
     for udaljenost, ugao in pucanjeLasera(x, y, mapa, n):
         if udaljenost > RADIUS: continue
 
-        #koristimo np.floor kako se negativne vrednosti ne bi zaokruzile
-        #na nulu (u slucaju da laser ode van mape), vec na -1
         x0 = int(np.floor(x + np.cos(ugao) * udaljenost))
         y0 = int(np.floor(y - np.sin(ugao) * udaljenost))
 
@@ -47,3 +42,18 @@ def formiranjeSkena(x, y, mapa, n):
         sken[y0, x0] = 1
 
     return sken
+
+def detekcija(senzor_radius: float, robot: dict, mapa1: dict) -> np.ndarray:
+    
+    sken = formiranjeSkena(robot["pozicija"][0], robot["pozicija"][1], mapa1["celije"], n=360)  # n = broj uglova za laserski senzor
+
+    centar_x, centar_y = int(robot["pozicija"][0]), int(robot["pozicija"][1])
+
+    start_x = max(0, centar_x - 10)
+    start_y = max(0, centar_y - 10)
+    end_x = min(sken.shape[1], centar_x + 10)
+    end_y = min(sken.shape[0], centar_y + 10)
+
+    sken_20x20 = sken[start_y:end_y, start_x:end_x]
+
+    return sken_20x20
