@@ -11,7 +11,27 @@ SCREEN_WIDTH, SCREEN_HEIGHT = 120, 60
 senzor_radius = 10
 cilj = np.array([15, 70])
 tmp_linspace = np.linspace(0, 2 * np.pi, 100)
+
+def dvosobni_stan():
     
+    mapa = {
+        "celije": np.ones((60, 120)),
+        "linije": []
+    }
+    
+    mapa["celije"][10:40, 10:40] = 0
+    mapa["celije"][10:40, 50:80] = 0
+    mapa["celije"][20:30, 40:50] = 0
+
+    start_point = np.array([15, 15])
+    end_point = np.array([15, 70])
+
+    return {
+        'mapa': mapa,
+        'start': start_point,
+        'end': end_point
+    }
+
 def ucitaj_mapu(fajl):
     with open(fajl, "rb") as f:
         mapa = pickle.load(f)

@@ -27,7 +27,6 @@ def vizuelizacija(mapa: dict, cilj: np.ndarray, putanja: list, istorija_int_mapa
 
         
         # original mapa
-        print(mapa.shape[0])
         for i in range(mapa.shape[0]):
             for j in range(mapa.shape[1]):
                 color = (0, 0, 0) if mapa[i, j] == 0 else (255, 255, 255)
@@ -73,7 +72,7 @@ if __name__ == "__main__":
 
     cilj = np.array([15, 70])
 
-    map_data = core.ucitaj_mapu("mapa.pkl")
+    map_data = core.ucitaj_mapu("dvosobni_stan.pkl")
     mapa = map_data["mapa"]
     cilj = map_data["end"]
 

@@ -28,16 +28,8 @@ def simulacija(robot: dict, cilj: np.ndarray, mapa: dict):
 
 if __name__ == "__main__":
 
-    mapa = {
-        "celije": np.ones((60, 120)),
-        "linije": []
-    }
-    
-    mapa["celije"][10:40, 10:40] = 0
-    mapa["celije"][10:40, 50:80] = 0
-    mapa["celije"][20:30, 40:50] = 0
 
-    map_data = core.ucitaj_mapu("mapa.pkl")
+    map_data = core.ucitaj_mapu("dvosobni_stan.pkl")
     mapa = map_data["mapa"]
     robot = core.robot(map_data["start"])
     cilj = map_data["end"]
