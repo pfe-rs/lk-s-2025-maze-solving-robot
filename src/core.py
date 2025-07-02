@@ -33,6 +33,7 @@ def dvosobni_stan():
     }
 
 
+
 def sacuvaj_mapu(fajl, mapa):
     with open("mapa.pkl", "wb") as f: 
         pickle.dump(mapa, f) # pretvara mapu u niz bajtova i zapisuje u fajl f 
@@ -49,12 +50,14 @@ def grid_mapa(celije):
     return {
         "celije": celije,
         "linije": None,
+        "cilj" : cilj
     }
 
 def laser_mapa(linije):
     return {
         "celije": None,
         "linije": linije,
+        "cilj" : cilj
     }
 
 def senzor():

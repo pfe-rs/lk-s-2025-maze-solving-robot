@@ -4,6 +4,7 @@ import mapiranje
 import core
 import pickle
 import numpy as np
+import generisanje_mape2
 
 from core import senzor_radius
 
@@ -29,7 +30,7 @@ def simulacija(robot: dict, cilj: np.ndarray, mapa: dict):
 if __name__ == "__main__":
 
 
-    map_data = core.ucitaj_mapu("dvosobni_stan.pkl")
+    map_data = generisanje_mape2.ucitaj_mapu("dvosobni_stan.pkl")
     mapa = map_data["mapa"]
     robot = core.robot(map_data["start"])
     cilj = map_data["end"]

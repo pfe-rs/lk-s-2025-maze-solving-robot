@@ -118,3 +118,8 @@ with open("mapa.pkl", "wb") as f:
             'end': end_point
         }, f) #pretvara mapu u niz bajtova i zapisuje u fajl f 
     #cuvanje mape u pickle file 
+
+def ucitaj_mapu(fajl):
+    with open(fajl, "rb") as f:
+        mapa = pickle.load(f)
+    return mapa
