@@ -17,7 +17,7 @@ Ovde stavljam generalne komentare za organizaciju svega.
     f) (Opcionalno) generisanje_mape.py - Ovde stavite sve vezano za generisanje mape i cuvanje iste u pickle fajl.
 """
 
-# TODO: Ovo vam nece trebati kada implementirate ucitavanje mape iz pickla
+# DONE: Ovo vam nece trebati kada implementirate ucitavanje mape iz pickla
 # Trebace vam samo neki CELL_SIZE parametar kojim podesavate koliko velike celije ce biti.
 SCREEN_WIDTH, SCREEN_HEIGHT = 120, 60
 
@@ -28,19 +28,19 @@ SCREEN_WIDTH, SCREEN_HEIGHT = 120, 60
 # }
 senzor_radius = 10
 
-# TODO: Cilj treba da bude deo pickla za mapu, tako da vam ne treba ovde.
+# DONE: Cilj treba da bude deo pickla za mapu, tako da vam ne treba ovde.
 cilj = np.array([15, 70])
 
 # TODO: Ovo se koristilo samo za iscrtavanje kruga u matplotlib-u. Vise vam ne treba u pygame-u
 tmp_linspace = np.linspace(0, 2 * np.pi, 100)
 
-# TODO: Prebaciti u simulacija.py
+# TODO: Prebaciti u simulacija.py - IZBACI
 def ucitaj_mapu(fajl):
     with open(fajl, "rb") as f:
         mapa = pickle.load(f)
     return {"celije": mapa["mapa"]}
 
-# TODO: Prebaciti u generisanje_mape.py
+# DONE: Prebaciti u generisanje_mape.py
 def generate_map():
     # 1 je slobodno polje
     mapa = np.ones((SCREEN_HEIGHT, SCREEN_WIDTH))  
@@ -61,7 +61,7 @@ def generate_map():
     return mapa
 
 
-# TODO: prebaciti u generisanje_mape.py
+# DONE: prebaciti u generisanje_mape.py
 def generisi_mapu():
     map_data = []
     
@@ -86,14 +86,14 @@ def generisi_mapu():
 
     return map_data
 
-# TODO: Ovo vam vise ne treba.
+# DONE: Ovo vam vise ne treba.
 mape = generisi_mapu()
 #print(f"screen width:{SCREEN_WIDTH}, height{SCREEN_HEIGHT}, w {W}, h {h}")
 
-# TODO: Prebaciti u simulacija.py
+# DONE: Prebaciti u simulacija.py
 mapa1 = ucitaj_mapu("mapa_1.pkl")
 
-# TODO: Napravite funkciju robot(pozicija, ugao, brzina) koji vam vraca ovaj dict.
+# DONE: Napravite funkciju robot(pozicija, ugao, brzina) koji vam vraca ovaj dict.
 # To treba da ostane u core.py i da ga posle koristite u simulacija.py preko import-a
 robot = {
     "pozicija": np.array([15, 15]),
@@ -107,7 +107,7 @@ interni_robot = {
     "robot_brzina": 1,
 }
 
-# TODO: Napravite funkcije koje prave ove dict-ove, jednu za mapu jednu za internu mapu.
+# DONE: Napravite funkcije koje prave ove dict-ove, jednu za mapu jednu za internu mapu.
 # TODO: Mapu preimenujte u prava_mapa, da bi bilo jasnije o kojoj mapi se radi. Takodje, u pravoj mapi ne treba da imate "linije".
 # TODO: Interna mapa treba da bude pretstavljena samo linijama. Za sada ostavite da ima i celije, ali se krecemo ka tome da nema celije, vec samo linije.
 # TODO: Ubacite "cilj" u obe mape, kako bi BFS i A* znali gde treba da se ide.
@@ -121,12 +121,12 @@ interna_mapa = {
     "linije": [] 
 }
 
-# TODO: Ovu mapu sacuvajte u mapa_0.pkl
+# DONE: Ovu mapu sacuvajte u mapa_0.pkl
 mapa["celije"][10:40, 10:40] = 0
 mapa["celije"][10:40, 50:80] = 0
 mapa["celije"][20:30, 40:50] = 0
 
-# TODO: Pomeriti u detekcija.py
+# DONE: Pomeriti u detekcija.py
 # TODO: Zameniti senzor_radius sa senzor koji je dict.
 # TODO: Promenite da sken bude dict: {"sken_matrix": <ovo sto trenutno imate kao sken>, "sken_hit": <laseri koji su udarili u zid>, "sken_miss": <laseri koji nisu udarili u zid>}
 # TODO: Preimenujte ovu funkciju u detekcija_matrix, koja vraca sken dict gde "sken_hit" i "sken_miss" su prazne liste, a samo "sken_matrix" ima rezultat.
@@ -139,14 +139,14 @@ def detekcija(senzor_radius: float, robot: dict, mapa1: dict) -> np.ndarray:
                 sken[i, j] = mapa1["celije"][i, j]
     return sken
 
-# TODO: Pomeriti mapiranje() u mapiranje.py
+# DONE: Pomeriti mapiranje() u mapiranje.py
 # TODO: Promenite da mapiranje vraca dict koji je interna mapa, umesto samo celije. Na taj nacin ce lakse biti da predjemo na linijsku reprezentaciju mape
 # TODO: Preimenujte ovu funkciju u mapiranje_matrix
 # TODO: Dodajte mapiranje_lines koja ima isti potpis kao mapiranje_matrix, ali vraca dict za internu mapu u kojoj se nalazi "linije" popunjene.
 def mapiranje(interna_mapa: dict, sken: np.ndarray, robot: dict) -> np.ndarray:
     return 1 - (1 - interna_mapa["celije"]) * (1 - sken)
 
-# TODO: Pomeriti kretanje() u kretanje.py
+# DONE: Pomeriti kretanje() u kretanje.py
 # TODO: Umesto da se vraca tuple[float, float], treba da se vraca tuple[dict, dict], gde je prvi dict pravi_robot, a drugi interni_robot.
 def kretanje(interni_robot: dict, pozicija: Tuple[float, float], cilj: np.ndarray, interna_mapa: dict) -> Tuple[float, float]:
     queue = [cilj.astype(int)]
@@ -167,7 +167,7 @@ def kretanje(interni_robot: dict, pozicija: Tuple[float, float], cilj: np.ndarra
     return robot["pozicija"] + pomeraj, interni_robot["pozicija"] + pomeraj
 
 
-# TODO: Ovo prebacite u vizuelizacija.py
+# DONE: Ovo prebacite u vizuelizacija.py
 def prikazi_skeniranje(screen, robot:dict, senzor_radius, tmp_linspace):
     pygame.draw.circle(screen, (255, 0, 0), 
                        (int(robot["pozicija"][1] * 10), int(robot["pozicija"][0] * 10)), 
@@ -180,8 +180,8 @@ def prikazi_skeniranje(screen, robot:dict, senzor_radius, tmp_linspace):
                          (int(robot["pozicija"][1] * 10), int(robot["pozicija"][0] * 10)),
                          (int(x_end * 10), int(y_end * 10)), 1)
 
-# TODO: Ovo prebacite u simulacija.py
-# TODO: Ne treba vam pozicija argument.
+# DONE: Ovo prebacite u simulacija.py
+# DONE: Ne treba vam pozicija argument.
 # TODO: Cilj ce biti u sastavu mape, tako da vam ne treba kao argument.
 def simulacija(robot: dict, pozicija: Tuple[float, float], cilj: np.ndarray, mapa1: dict):
 
@@ -197,7 +197,7 @@ def simulacija(robot: dict, pozicija: Tuple[float, float], cilj: np.ndarray, map
 
     return putanja, istorija_int_mapa
 
-# TODO: Pomerite u vizuelizacija.py
+# DONE: Pomerite u vizuelizacija.py
 def vizuelizacija(mapa: dict, putanja: list, istorija_int_mapa: list):
     pygame.init()
     
@@ -242,28 +242,28 @@ def vizuelizacija(mapa: dict, putanja: list, istorija_int_mapa: list):
 
     pygame.quit()
 
-# TODO: Ovo vam vise ne treba.
+# DONE: Ovo vam vise ne treba.
 putanja = []
 istorija_int_mapa = []
 
-# TODO: Ovo pomerite u simulacija.py
-# TODO: Dodajte cuvanje putanje i istorije internih mapa u pickle.
+# DONE: Ovo pomerite u simulacija.py
+# DONE: Dodajte cuvanje putanje i istorije internih mapa u pickle.
 putanja, istorija_int_mapa = simulacija(robot, robot["pozicija"], cilj, mapa)
 
 #putanja.append(robot["pozicija"])
 
-# TODO: Ovo pomerite u vizuelizacija.py
-# TODO: Umesto koriscenja izracunatih vrednosti, dodajte ucitavanje rezultata iz pickle-a koje su generisane u simulacija.py
+# DONE: Ovo pomerite u vizuelizacija.py
+# DONE: Umesto koriscenja izracunatih vrednosti, dodajte ucitavanje rezultata iz pickle-a koje su generisane u simulacija.py
 vizuelizacija(mapa, putanja, istorija_int_mapa)
 
 # DONE : razdvojiti simulaciju od vizuelizacije
 # DONE : napraviti funkciju za simulaciju (pocetni polozaj robota, cilj, mapa) -> putanja, listu internih mapa
 # DONE : napraviti funkciju za vizuelizaciju (mapa, putanja, lista internih mapa)
 
-# TODO : dataset(sacuvane u fajlu) generisanih mapa, sa pocetnom i krajnjom tackom {pickle}
+# DONE : dataset(sacuvane u fajlu) generisanih mapa, sa pocetnom i krajnjom tackom {pickle}
 # TODO : interna reprezentacija robota, sken treba da je matrica dimenzija [2*sken radius][2*sken radius], promeniti mapiranje da radi sa tom matricom skena, 
 # TODO : detekciju izmeniti, gledati da sken ne bude cela matrica vec samo deo koji je skeniran tj dimenzija [2*sken radius][2*sken radius], traziti odakle dokle ide for petlja itd
 
 
-# TODO : detekcija => koristim pravu poziciju robota, sken se ogranicava na 20*20 umesto na celu mapu
-# TODO : mapiranje => prosledjujem pravog robota, siftujem sken za +- radijus skena 
+# DONE : detekcija => koristim pravu poziciju robota, sken se ogranicava na 20*20 umesto na celu mapu
+# DONE : mapiranje => prosledjujem pravog robota, siftujem sken za +- radijus skena 

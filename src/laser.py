@@ -1,6 +1,6 @@
 import numpy as np
 
-# TODO: Prebacite sve ovo u detekcija.py
+# DONE: Prebacite sve ovo u detekcija.py
 
 # TODO: Umesto da radius bude deo laser.py (ili detekcija.py), treba da postane argument funkcije pucanje_lasera
 RADIUS = 10
@@ -43,6 +43,7 @@ def formiranjeSkena(x, y, mapa, n):
     for udaljenost, ugao in pucanjeLasera(x, y, mapa, n):
         if udaljenost > RADIUS: continue
 
+        # TODO: Prebaci konverziju gore.
         #koristimo np.floor kako se negativne vrednosti ne bi zaokruzile
         #na nulu (u slucaju da laser ode van mape), vec na -1
         x0 = int(np.floor(x + np.cos(ugao) * udaljenost))
