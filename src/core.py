@@ -5,12 +5,17 @@ import pygame
 #import maze 
 import pickle
 import random
+ 
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 120, 60
 
-senzor_radius = 10
-cilj = np.array([15, 70])
+#senzor_radius = 10
+#cilj = np.array([15, 70])
 
+def ucitaj_mapu(fajl):
+    with open(fajl, "rb") as f:
+        mapa = pickle.load(f)
+    return mapa
 
 def dvosobni_stan():
     
@@ -46,18 +51,18 @@ def robot(pozicija):
         "robot_brzina": 1
     }
 
-def grid_mapa(celije):
+def grid_mapa(celije, cilj):
     return {
         "celije": celije,
         "linije": None,
-        "cilj" : cilj
+        "cilj": cilj
     }
 
-def laser_mapa(linije):
+def laser_mapa(linije, cilj):
     return {
         "celije": None,
         "linije": linije,
-        "cilj" : cilj
+        "cilj": cilj 
     }
 
 def senzor():
