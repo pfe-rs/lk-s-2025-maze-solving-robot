@@ -43,7 +43,7 @@ def formiranjeSkena(x, y, mapa, n):
 
     return sken
 
-def detekcija(senzor_radius: float, robot: dict, mapa1: dict) -> np.ndarray:
+def detekcija_relativna(senzor_radius: float, robot: dict, mapa1: dict) -> np.ndarray:
     
     sken = formiranjeSkena(robot["pozicija"][0], robot["pozicija"][1], mapa1["celije"], n=360)  # n = broj uglova za laserski senzor
 
@@ -57,3 +57,11 @@ def detekcija(senzor_radius: float, robot: dict, mapa1: dict) -> np.ndarray:
     sken_20x20 = sken[start_y:end_y, start_x:end_x]
 
     return sken_20x20
+
+def detekcija(senzor_radius: float, robot: dict, mapa1: dict) -> np.ndarray:
+    sken = np.zeros(mapa1["celije"].shape)
+    for i in range(mapa1["celije"].shape[0]): 
+        for j in range(mapa1["celije"].shape[1]):
+            if (i - robot["pozicija"][0]) ** 2 + (j - robot["pozicija"][1]) ** 2 < senzor_radius ** 2:
+                sken[i, j] = mapa1["celije"][i, j]
+    return sken

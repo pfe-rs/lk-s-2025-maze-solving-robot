@@ -91,13 +91,6 @@ interna_mapa = {
 #mapa["celije"][10:40, 50:80] = 0
 #mapa["celije"][20:30, 40:50] = 0
 
-def detekcija(senzor_radius: float, robot: dict, mapa1: dict) -> np.ndarray:
-    sken = np.zeros(mapa1["celije"].shape)
-    for i in range(mapa1["celije"].shape[0]): 
-        for j in range(mapa1["celije"].shape[1]):
-            if (i - robot["pozicija"][0]) ** 2 + (j - robot["pozicija"][1]) ** 2 < senzor_radius ** 2:
-                sken[i, j] = mapa1["celije"][i, j]
-    return sken
 
 def mapiranje(interna_mapa: dict, sken: np.ndarray, robot: dict) -> np.ndarray:
     return 1 - (1 - interna_mapa["celije"]) * (1 - sken)
