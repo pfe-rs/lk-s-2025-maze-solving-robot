@@ -2,7 +2,6 @@ import pygame
 import numpy as np
 import pickle
 import core
-#import generisanje_mape2
 
 def vizuelizacija(mapa: dict, cilj: np.ndarray, putanja: list, istorija_int_mapa: list):
     pygame.init()

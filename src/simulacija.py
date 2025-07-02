@@ -4,7 +4,6 @@ import mapiranje
 import core
 import pickle
 import numpy as np
-import generisanje_mape2
 
 from core import senzor
 
