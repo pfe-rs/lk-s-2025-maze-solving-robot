@@ -1,28 +1,31 @@
 import pygame
 import numpy as np
-from laser import formiranjeSkena
+import detekcija
 import random
-from mapa import mapa
-from idi import *
+import core
+from kretanje import kretanje
+import mapiranje
 
  ## TODO : izbrisati fajl posle
 # tmp_linspace = np.linspace(0, 2 * np.pi, 100)
 # ne koristimo ovo, ne znam zasto ga imamo
+
+
+map_data = core.ucitaj_mapu("dvosobni_stan.pkl")
+mapa = map_data["mapa"]
 
 CELL = 5
 WIDTH, HEIGHT = 120, 60
 RES = SCREEN_WIDTH, SCREEN_HEIGHT = WIDTH * CELL, HEIGHT * CELL
 #djelimo mapu na piksele
 ROBOT_SPEED = 1
-
-interna_mapa = np.zeros((HEIGHT, WIDTH))
 #sve stavljamo na crna
 
 def nasumicna_pozicija_na_bijeloj_podlozi(mapa):
     while True:
-        y = random.randint(0, mapa.shape[0] - 1)
-        x = random.randint(0, mapa.shape[1] - 1)
-        if mapa[y, x] == 0:
+        y = random.randint(0, mapa["celije"].shape[0] - 1)
+        x = random.randint(0, mapa["celije"].shape[1] - 1)
+        if mapa["celije"][y, x] == 0:
             return np.array([y, x])
         
 cilj = nasumicna_pozicija_na_bijeloj_podlozi(mapa)
@@ -40,12 +43,6 @@ mapaDict = {
     "celije": np.ones((HEIGHT, WIDTH)),
     "linije": []
 }
-
-def mapiranje(interna_mapa: np.ndarray, sken: np.ndarray) -> np.ndarray:
-    return 1 -(1-sken) * (1-interna_mapa)
-
-
-
 
 #pygame
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT*2))
@@ -82,6 +79,12 @@ putanja.append(robot["pozicija"])
 
 running = True
 koraci = 200
+
+senzor = core.senzor()
+istorija_int_mapa = []
+interni_robot = core.robot(np.array([0, 0]))
+interna_mapa = core.grid_mapa(mapa["celije"], mapa["cilj"])
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -89,10 +92,10 @@ while running:
             running = False
     if koraci<=0 or not running: continue
     koraci-=1
-    
-    sken = formiranjeSkena(robot["pozicija"][1], robot["pozicija"][0], mapa, 50)
-    interna_mapa = mapiranje(interna_mapa, sken)
-    robot["pozicija"] = kretanje(robot["pozicija"], cilj, interna_mapa)
-    print(koraci, robot["pozicija"])
+
+    sken = detekcija.detekcija(senzor, robot, mapa)
+    interna_mapa["celije"] = mapiranje.mapiranje(interna_mapa, sken, robot)
+    istorija_int_mapa.append(interna_mapa["celije"])
+    robot["pozicija"], interni_robot["pozicija"] = kretanje.kretanje(interni_robot, robot, mapa["cilj"], interna_mapa)
     putanja.append(robot["pozicija"])
     draw()
