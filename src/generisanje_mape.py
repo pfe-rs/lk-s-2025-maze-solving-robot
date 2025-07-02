@@ -13,6 +13,11 @@ def ucitaj_mapu(fajl):
         mapa = pickle.load(f)
     return {"celije": mapa["mapa"]}
 
+def sacuvaj_mapu(fajl, mapa):
+    with open("mapa.pkl", "wb") as f: 
+        pickle.dump(mapa, f) # pretvara mapu u niz bajtova i zapisuje u fajl f 
+        # cuvanje mape u pickle file 
+
 def generate_map():
     # 1 je slobodno polje
     mapa = np.ones((SCREEN_HEIGHT, SCREEN_WIDTH))  

@@ -1,7 +1,7 @@
 import numpy as np
-from core import *
+import core
 
-def kretanje(interni_robot: dict, pozicija: Tuple[float, float], cilj: np.ndarray, interna_mapa: dict) -> Tuple[float, float]:
+def kretanje(interni_robot: dict, robot: dict, cilj: np.ndarray, interna_mapa: dict) -> tuple[float, float]:
     queue = [cilj.astype(int)]
     visited = np.zeros((interna_mapa["celije"].shape[0], interna_mapa["celije"].shape[1], 2))
     while len(queue) > 0:
