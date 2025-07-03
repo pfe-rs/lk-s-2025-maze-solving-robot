@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
     cilj = np.array([15, 70])
  
-    map_data = core.ucitaj_mapu("dvosobni_stan.pkl")
+    map_data = core.ucitaj_mapu("mapa.pkl")
     mapa = map_data["mapa"]
     cilj = map_data["end"]
 
