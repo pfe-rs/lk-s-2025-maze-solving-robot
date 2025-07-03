@@ -91,3 +91,5 @@ def detekcija_matrix(senzor: dict, robot: dict, mapa1: dict) -> np.ndarray:
                # else:
                 #    sken_data["sken_miss"].append((i, j))
     return sken_data
+
+    

@@ -16,7 +16,7 @@ def ucitaj_mapu(fajl):
     with open(fajl, "rb") as f:
         mapa = pickle.load(f)
     return mapa
-
+ 
 def dvosobni_stan():
     
     mapa = {

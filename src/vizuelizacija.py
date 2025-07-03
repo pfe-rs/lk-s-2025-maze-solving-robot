@@ -35,7 +35,7 @@ def vizuelizacija(mapa: dict, cilj: np.ndarray, putanja: list, istorija_int_mapa
         for i in range(mapa.shape[0]):
             for j in range(mapa.shape[1]):
                 color = (0, 0, 0) if istorija_int_mapa[frame][i, j] == 0 else (255, 255, 255)
-                pygame.draw.rect(screen, color, (j * cell_size, i * cell_size + mapa.shape[1] * cell_size, cell_size, cell_size))
+                pygame.draw.rect(screen, color, (j * cell_size, i * cell_size + mapa.shape[0] * cell_size, cell_size, cell_size))
 
         # robot i cilj
         pygame.draw.circle(screen, (0, 255, 0), (int(cilj[1] * cell_size), int(cilj[0] * cell_size)), 5)
