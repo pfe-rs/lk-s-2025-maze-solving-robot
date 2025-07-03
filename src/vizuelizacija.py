@@ -70,7 +70,7 @@ if __name__ == "__main__":
     mapa["celije"][20:30, 40:50] = 0
 
     cilj = np.array([15, 70])
-
+ 
     map_data = core.ucitaj_mapu("dvosobni_stan.pkl")
     mapa = map_data["mapa"]
     cilj = map_data["end"]
