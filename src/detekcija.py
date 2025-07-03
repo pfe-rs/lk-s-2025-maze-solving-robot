@@ -78,7 +78,7 @@ def detekcija_relativna(senzor: dict, robot: dict, mapa1: dict) -> np.ndarray:
         "misses": sken_data["sken_miss"]
     }
 
-def detekcija(senzor: dict, robot: dict, mapa1: dict) -> np.ndarray:
+def detekcija_matrix(senzor: dict, robot: dict, mapa1: dict) -> np.ndarray:
     sken_data = {"sken_matrix": np.zeros(mapa1["celije"].shape), "sken_hit": [], "sken_miss": []}
 
     for i in range(mapa1["celije"].shape[0]): 
@@ -86,8 +86,8 @@ def detekcija(senzor: dict, robot: dict, mapa1: dict) -> np.ndarray:
             if (i - robot["pozicija"][0]) ** 2 + (j - robot["pozicija"][1]) ** 2 < senzor["radius"] ** 2:
                 sken_data["sken_matrix"][i, j] = mapa1["celije"][i, j]
                 
-                if mapa1["celije"][i, j] == 1:
-                    sken_data["sken_hit"].append((i, j))
-                else:
-                    sken_data["sken_miss"].append((i, j))
+              #  if mapa1["celije"][i, j] == 1:
+               #     sken_data["sken_hit"].append((i, j))
+               # else:
+                #    sken_data["sken_miss"].append((i, j))
     return sken_data

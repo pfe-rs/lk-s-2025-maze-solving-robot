@@ -16,7 +16,7 @@ def simulacija(robot: dict, senzor: dict, mapa: dict):
     interni_robot = core.robot(np.array([0, 0]))
 
     for i in range(50):
-        sken_data = detekcija.detekcija(senzor, robot, mapa)
+        sken_data = detekcija.detekcija_matrix(senzor, robot, mapa)
         interna_mapa["celije"] = mapiranje.mapiranje(interna_mapa, sken_data, robot)
         istorija_int_mapa.append(interna_mapa["celije"])
         robot["pozicija"], interni_robot["pozicija"] = kretanje.kretanje(interni_robot, robot, mapa["cilj"], interna_mapa)
