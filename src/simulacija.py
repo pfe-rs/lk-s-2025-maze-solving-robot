@@ -32,15 +32,17 @@ if __name__ == "__main__":
 
     # TODO: stavi for petlju da pokrene simulaciju za sve mape
 
-    map_data = core.ucitaj_mapu("mapa.pkl")
-    mapa = map_data["mapa"]
-    robot = core.robot(map_data["start"])
-    senzor = core.senzor()
-    mapa["cilj"] = map_data["end"]
+    for i in range (10):
 
-    putanja, istorija_int_mapa = simulacija(robot, senzor, mapa)
+        map_data = core.ucitaj_mapu(f"mapa{i+1}.pkl")
+        mapa = map_data["mapa"]
+        robot = core.robot(map_data["start"])
+        senzor = core.senzor()
+        mapa["cilj"] = map_data["end"]
 
-    print("Duzina:", len(putanja))
+        putanja, istorija_int_mapa = simulacija(robot, senzor, mapa)
 
-    with open("simulacija_rezultati.pkl", "wb") as f:
-        pickle.dump({"putanja": putanja, "istorija_int_mapa": istorija_int_mapa}, f)
+        print("Duzina:", len(putanja))
+
+        with open(f"simulacija_rezultati{i+1}.pkl", "wb") as f:
+            pickle.dump({"putanja": putanja, "istorija_int_mapa": istorija_int_mapa}, f)

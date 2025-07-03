@@ -84,11 +84,4 @@ istorija_int_mapa = []
 # DONE : razdvojiti simulaciju od vizuelizacije
 # DONE : napraviti funkciju za simulaciju (pocetni polozaj robota, cilj, mapa) -> putanja, listu internih mapa
 # DONE : napraviti funkciju za vizuelizaciju (mapa, putanja, lista internih mapa)
-
-# TODO : dataset(sacuvane u fajlu) generisanih mapa, sa pocetnom i krajnjom tackom {pickle}
-# TODO : interna reprezentacija robota, sken treba da je matrica dimenzija [2*sken radius][2*sken radius], promeniti mapiranje da radi sa tom matricom skena, 
-# TODO : detekciju izmeniti, gledati da sken ne bude cela matrica vec samo deo koji je skeniran tj dimenzija [2*sken radius][2*sken radius], traziti odakle dokle ide for petlja itd
-
-
-# TODO : detekcija => koristim pravu poziciju robota, sken se ogranicava na 20*20 umesto na celu mapu
-# TODO : mapiranje => prosledjujem pravog robota, siftujem sken za +- radijus skena 
+ 
