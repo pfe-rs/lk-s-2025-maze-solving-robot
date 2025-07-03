@@ -18,4 +18,11 @@ def kretanje(interni_robot: dict, robot: dict, cilj: np.ndarray, interna_mapa: d
     razlika = novi_cilj - robot["pozicija"]
     razlika = razlika / np.linalg.norm(razlika)
     pomeraj = razlika * robot["robot_brzina"]
-    return robot["pozicija"] + pomeraj, interni_robot["pozicija"] + pomeraj
+
+    nova_poz_pravog_robota = robot["pozicija"] + pomeraj
+    nova_poz_internog_robota = interni_robot["pozicija"] + pomeraj
+    
+    robot["pozicija"] = nova_poz_pravog_robota
+    interni_robot["pozicija"] = nova_poz_internog_robota
+    
+    return robot, interni_robot
