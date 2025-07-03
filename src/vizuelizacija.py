@@ -44,13 +44,13 @@ def vizuelizacija(mapa: dict, cilj: np.ndarray, putanja: list, istorija_int_mapa
             pygame.draw.circle(screen, (0, 0, 255), (int(p[1] * cell_size), int(p[0] * cell_size)), 2)
 
         
-        pygame.draw.circle(screen, (255, 0, 0), (int(putanja[-1][1] * cell_size), int(putanja[-1][0] * cell_size)), 5)
+        pygame.draw.circle(screen, (255, 0, 0), (int(putanja[frame][1] * cell_size), int(putanja[frame][0] * cell_size)), 5)
     
 
         # prikazi_matplotlib(robot, cilj, putanja, senzor_radius, tmp_linspace, mapa, interna_mapa)
 
         pygame.display.flip()
-        clock.tick(100)
+        clock.tick(10)
 
         frame += 1
         if frame >= len(putanja):
