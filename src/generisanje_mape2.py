@@ -111,7 +111,7 @@ print(mapa)
 start_point = nasumicna_pozicija_na_bijeloj_podlozi(mapa)
 end_point = nasumicna_pozicija_na_bijeloj_podlozi(mapa)
 
-with open("mapa9.pkl", "wb") as f: 
+with open("mapa8.pkl", "wb") as f: 
     pickle.dump({
             'mapa': core.grid_mapa(mapa, end_point),
             'start': start_point,

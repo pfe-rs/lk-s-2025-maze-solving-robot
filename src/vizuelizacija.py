@@ -50,7 +50,7 @@ def vizuelizacija(mapa: dict, cilj: np.ndarray, putanja: list, istorija_int_mapa
         # prikazi_matplotlib(robot, cilj, putanja, senzor_radius, tmp_linspace, mapa, interna_mapa)
 
         pygame.display.flip()
-        clock.tick(10)
+        clock.tick(100)
 
         frame += 1
         if frame >= len(putanja):
@@ -71,11 +71,11 @@ if __name__ == "__main__":
 
     cilj = np.array([15, 70])
  
-    map_data = core.ucitaj_mapu("mapa.pkl")
+    map_data = core.ucitaj_mapu("mapa1.pkl")
     mapa = map_data["mapa"]
     cilj = map_data["end"]
 
-    with open("simulacija_rezultati.pkl", "rb") as f:
+    with open("simulacija_rezultati1.pkl", "rb") as f:
         rez = pickle.load(f)
     
     putanja, istorija_int_mapa = rez["putanja"], rez["istorija_int_mapa"]
