@@ -19,7 +19,7 @@ def simulacija(robot: dict, senzor: dict, mapa: dict):
         sken_data = detekcija.formiranjeSkena(senzor, robot, mapa)
         interna_mapa = mapiranje.mapiranje_matrix(interna_mapa, sken_data, robot)
         istorija_int_mapa.append(interna_mapa["celije"])
-        robot["pozicija"], interni_robot["pozicija"] = kretanje.kretanje(interni_robot, robot, mapa["cilj"], interna_mapa)
+        robot, interni_robot = kretanje.kretanje(interni_robot, robot, mapa["cilj"], interna_mapa)
         print(i, robot["pozicija"])
         putanja.append(robot["pozicija"])
 
