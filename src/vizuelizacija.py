@@ -12,7 +12,6 @@ def vizuelizacija(mapa: dict, cilj: np.ndarray, putanja: list, istorija_int_mapa
 
     screen = pygame.display.set_mode((mapa.shape[1] * cell_size, mapa.shape[0] * cell_size * 2))
     pygame.display.set_caption("slam brute force")
-
     running = True
     clock = pygame.time.Clock()
         
@@ -71,6 +70,7 @@ if __name__ == "__main__":
 
     cilj = np.array([15, 70])
  
+<<<<<<< HEAD
     map_data = core.ucitaj_mapu("mapa1.pkl")
     mapa = map_data["mapa"]
     cilj = map_data["end"]
@@ -79,5 +79,16 @@ if __name__ == "__main__":
         rez = pickle.load(f)
     
     putanja, istorija_int_mapa = rez["putanja"], rez["istorija_int_mapa"]
+=======
+    for i in range(10):
+        map_data = core.ucitaj_mapu(f"mapa{i+1}.pkl")
+        mapa = map_data["mapa"]
+        cilj = map_data["end"]
 
-    vizuelizacija(mapa, cilj, putanja, istorija_int_mapa)
+        with open(f"simulacija_rezultati{i+1}.pkl", "rb") as f:
+            rez = pickle.load(f)
+        
+        putanja, istorija_int_mapa = rez["putanja"], rez["istorija_int_mapa"]
+>>>>>>> 0c5d1e9bc223dbd5c63b3295de4ba3228614c712
+
+        vizuelizacija(mapa, cilj, putanja, istorija_int_mapa)
