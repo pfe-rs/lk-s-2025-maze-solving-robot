@@ -17,7 +17,8 @@ def simulacija(robot: dict, senzor: dict, mapa: dict):
 
     # TODO: Da petlja traje duze
     for i in range(300):
-            
+            putanja = []
+            istorija_int_mapa = []
             if np.linalg.norm(robot["pozicija"] - mapa["cilj"]) < 1:
                 print(f"Cilj dostignut u {i} koraka!")
                 break 
@@ -29,7 +30,7 @@ def simulacija(robot: dict, senzor: dict, mapa: dict):
             robot, interni_robot = kretanje.kretanje(interni_robot, robot, mapa["cilj"], interna_mapa)
 
             print(f"Korak {i}: {robot['pozicija']}")
-            putanja.append(robot["pozicija"])
+            putanja.append(robot["pozicija"]) 
 
     return putanja, istorija_int_mapa
 
@@ -39,7 +40,7 @@ if __name__ == "__main__":
     # TODO: stavi for petlju da pokrene simulaciju za sve mape
 
     for i in range (1, 10):
-
+        
         map_data = core.ucitaj_mapu(f"mapa{i+1}.pkl")
         mapa = map_data["mapa"]
         robot = core.robot(map_data["start"])

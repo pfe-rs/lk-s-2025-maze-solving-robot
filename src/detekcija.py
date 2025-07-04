@@ -1,7 +1,7 @@
 import numpy as np
 import core 
 
-RADIUS = 10
+RADIUS = 100
 KORAK = 0.1
 
 def generisanjeUglova(n):

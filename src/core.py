@@ -67,8 +67,8 @@ def laser_mapa(linije, cilj):
 
 def senzor():
     return {
-        "radius": 10, # koliko daleko moze laser da vidi.
-        "num_lasers": 90 # broj lasera
+        "radius": 100, # koliko daleko moze laser da vidi.
+        "num_lasers": 300 # broj lasera
     }
 
 
