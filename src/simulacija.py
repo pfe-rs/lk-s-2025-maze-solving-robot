@@ -1,5 +1,6 @@
 import detekcija
-import kretanje
+from kretanje import bfs, dfs, astar
+from kretanje import dfs
 import mapiranje
 import core
 import pickle
@@ -9,6 +10,8 @@ from core import senzor
 
 
 def simulacija(robot: dict, senzor: dict, mapa: dict):
+    print(mapa["cilj"])
+    
     istorija_int_mapa = []
     putanja = []
 
@@ -16,14 +19,17 @@ def simulacija(robot: dict, senzor: dict, mapa: dict):
     interni_robot = core.robot(np.array([0, 0]))
 
     # TODO: Da petlja traje duze
-    for i in range(50):
+    for i in range(300):
         sken_data = detekcija.formiranjeSkena(senzor, robot, mapa)
         interna_mapa = mapiranje.mapiranje_matrix(interna_mapa, sken_data, robot)
         istorija_int_mapa.append(interna_mapa["celije"])
-        robot, interni_robot = kretanje.kretanje(interni_robot, robot, mapa["cilj"], interna_mapa)
+        robot, interni_robot = astar(interni_robot, robot, mapa["cilj"], interna_mapa)
         # TODO: Da se prekine simulacija ako je cilj < 1 udaljen
         print(i, robot["pozicija"])
         putanja.append(robot["pozicija"])
+
+        if abs(robot["pozicija"][0] - mapa["cilj"][0])<1 and abs(robot["pozicija"][1] - mapa["cilj"][1])<1: 
+            break
 
 
     return putanja, istorija_int_mapa
@@ -32,8 +38,7 @@ if __name__ == "__main__":
 
     # TODO: stavi for petlju da pokrene simulaciju za sve mape
 
-    for i in range (10):
-
+    for i in range(10):
         map_data = core.ucitaj_mapu(f"mapa{i+1}.pkl")
         mapa = map_data["mapa"]
         robot = core.robot(map_data["start"])
